@@ -1,14 +1,16 @@
 import { UserLanguage, UserRole } from "src/constants/enums"
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 
-
-@Entity({name: 'users'})
-export class User {
+@Entity({name: 'auths'})
+export class Auth {
     @PrimaryGeneratedColumn('uuid')
     id : number
 
     @Column({ unique : true })
-    mail : string
+    targetEmail : string
+
+    @Column()
+    verificationToken? : string
 
     @Column()
     name : string
@@ -17,10 +19,10 @@ export class User {
     password : string
 
     @Column()
-    role : UserRole
+    language : UserLanguage
 
     @Column()
-    language : UserLanguage
+    accepteddAt? : Date
 
     @CreateDateColumn({
         type: 'timestamp',

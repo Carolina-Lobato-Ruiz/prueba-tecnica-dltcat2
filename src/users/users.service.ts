@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './users.entity';
-import { UserLanguage, UserRole } from "./users.enums"
+import { UserLanguage, UserRole } from "src/constants/enums"
 import { NotFoundException } from '@nestjs/common';
 
 
@@ -12,7 +12,7 @@ export class UsersService {
         mail : "email",
         name : 'nombre',
         password : "contrasenia",
-        role : UserRole.NO_REGISTRADO,
+        role : UserRole.REGISTRADO,
         language : UserLanguage.ESP,
         createdAt : new Date(),
         updatedAt : new Date(),
@@ -26,7 +26,7 @@ export class UsersService {
     }
 
     getUserByMail(mail: string) : User { // | undefined
-        const actualUser = this.users.find
+        //const actualUser = this.users.find
         const user = this.users.find(user => user.mail === mail);
 
         if (!user) {
@@ -34,18 +34,16 @@ export class UsersService {
         }
 
         return user;
-
-        //return this.users.find(user => user.mail === mail) // == o ===
     }
 
     //Create a partir del mail, nombre y contasenya
     createUser(mail : string, name : string, password : string){
         const user = {
             id : 2 ,
-            mail : "email",
-            name : 'nombre',
-            password : "contrasenia",
-            role : UserRole.NO_REGISTRADO,
+            mail : mail,
+            name : name,
+            password : password,
+            role : UserRole.REGISTRADO,
             language : UserLanguage.ESP,
             createdAt : new Date(),
             updatedAt : new Date(),
@@ -66,11 +64,16 @@ export class UsersService {
         }
     }
 
-    //Esto es a lo que se refiere cuando pide (imagen 05, 3er post): "rechaza todas las peticiones pendientes asociadas a un email" ?
-    //Eliminar el usuario sin registrar
+    //Delete lógico a partir de un mail
     //Hay que marcarlos como rechazados, no hay que eliminar en ningún momento a los usuarios
     deleteUser(mail : string){
         this.users.filter(user => user.mail != mail ) // != o !==
+        try {
+            const user = this.getUserByMail(mail);
+            user.deletedAt = new Date // Se pasa por referencia, en el array se cambia al cambiarlo aquí
+        } catch (error) {
+            console.error("El mail no existe");
+        }
     }
 
 
